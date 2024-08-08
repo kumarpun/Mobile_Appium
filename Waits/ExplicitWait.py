@@ -2,11 +2,8 @@ from appium import webdriver
 from typing import Any, Dict
 from appium.options.common import AppiumOptions
 from appium.webdriver.common.appiumby import AppiumBy
-from appium.webdriver.appium_service import AppiumService
-
-appium_service = AppiumService()
-
-appium_service.start()
+from selenium.common import ElementNotVisibleException, ElementNotSelectableException, NoSuchElementException
+from selenium.webdriver.support.wait import WebDriverWait
 
 cap: Dict[str, Any] = {
     'platformName': 'Android',
@@ -21,9 +18,13 @@ url = 'http://127.0.0.1:4723'
 driver = webdriver.Remote(url, options=AppiumOptions().load_capabilities(cap))
 
 # el = driver.find_element(AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().text("CONTACT US FORM")')
-el = driver.find_element(AppiumBy.XPATH, '//*[@text="CONTACT US FORM"]')
+# el = driver.find_element(AppiumBy.XPATH, '//*[@text="CONTACT US FORM"]')
 
-el.click()
-driver.quit()
 
-appium_service.stop()
+wait = WebDriverWait(driver,5,poll_frequency=1, ignored_exceptions=[ElementNotVisibleException,ElementNotSelectableException,NoSuchElementException])
+
+ele = wait.until(lambda x:x.find_element(AppiumBy.XPATH, '//*[@text="CONTACT US FORM"]'))
+ele.click()
+
+# print("package:", driver.current_package)
+# print("activity:", driver.current_activity)
